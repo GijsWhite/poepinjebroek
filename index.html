@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <title>Heb je poep in je broek?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poep In Je Broek?</title>
   <style>
     :root {
       --bg: #0e0e11;
@@ -11,181 +11,358 @@
       --muted: #b7b7c0;
       --red: #ff3b30;
       --green: #34c759;
-      --card: #17171c;
+      --gold: #d4af37;
       --accent: #8a8aff;
+      --card: #17171c;
     }
-    * { box-sizing: border-box }
-    html, body { height: 100% }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
       margin: 0;
-      background: radial-gradient(1200px 800px at 50% -10%, #1c1c22, var(--bg));
+      padding: 0;
+      height: 100%;
+      background: radial-gradient(1000px 700px at 50% -10%, #1c1c22, var(--bg));
+      font-family: system-ui, -apple-system, sans-serif;
       color: var(--fg);
-      font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      display: grid;
-      place-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
       padding: 24px;
     }
 
-    .wrap { width: min(700px, 100%); text-align: center }
-
-    h1 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 36px); }
-    p.sub { margin: 0 0 24px; color: var(--muted) }
-
-    button#check {
-      appearance: none;
-      border: 0;
-      padding: 14px 22px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: clamp(16px, 2.5vw, 18px);
-      background: linear-gradient(180deg, #5a5aff, #3e3ef0);
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(98, 98, 255, .25);
-      transition: transform .08s ease, filter .2s ease;
+    main {
+      max-width: 600px;
+      width: 100%;
+      padding: 24px;
+      position: relative;
     }
-    button#check:hover { filter: brightness(1.05) }
-    button#check:active { transform: translateY(1px) }
-    button#check[disabled] { opacity: .6; cursor: not-allowed }
 
-    /* Loading animation */
-    .loading {
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    p.sub {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    button {
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(180deg, #5a5aff, #3e3ef0);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(98, 98, 255, 0.3);
+      transition: filter 0.2s, transform 0.1s;
+      position: relative;
+      z-index: 1;
+      margin: 8px 0;
+      width: 100%;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .loader {
       display: none;
-      margin: 24px auto 8px;
-      width: 56px; height: 56px;
-      border-radius: 50%;
+      margin: 24px auto;
+      width: 48px;
+      height: 48px;
       border: 6px solid #2a2a33;
       border-top-color: var(--accent);
+      border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg) } }
-    .loading-text { display:none; color: var(--muted); margin: 6px 0 0 }
 
-    /* Result card */
-    .result {
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: var(--muted);
+      margin-top: 8px;
       display: none;
-      margin: 24px auto 0;
-      background: var(--card);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.35);
     }
 
-    .image-box {
-      position: relative;
-      aspect-ratio: 16 / 9;
-      width: min(640px, 100%);
-      margin: 0 auto 12px;
-      border: 6px solid transparent;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background:
-        repeating-conic-gradient(from 0deg, #202028 0 25%, #23232b 0 50%) 0 0 / 40px 40px;
-    }
-    .image-box.red { border-color: var(--red) }
-    .image-box.green { border-color: var(--green) }
-
-    .image-box .placeholder {
-      font-weight: 900;
-      letter-spacing: .06em;
-      font-size: clamp(28px, 8vw, 64px);
-      opacity: .15;
-      user-select: none;
+    .result {
+      margin-top: 28px;
     }
 
     .caption {
-      font-size: clamp(18px, 3.5vw, 24px);
-      font-weight: 800;
-      margin: 0;
-      padding: 10px 12px;
-      border-radius: 10px;
-      display: inline-block;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
-    .caption.red { color: var(--red) }
-    .caption.green { color: var(--green) }
 
-    /* fade-in */
-    .fade-in { animation: fade .35s ease-out both }
-    @keyframes fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+    .caption.red {
+      color: var(--red);
+    }
 
-    footer { margin-top: 28px; color: var(--muted); font-size: 13px }
-    a { color: #b9b9ff; text-decoration: none }
-    a:hover { text-decoration: underline }
+    .caption.green {
+      color: var(--green);
+    }
+
+    .caption.gold {
+      color: var(--gold);
+    }
+
+    .image-container {
+      border: 5px solid transparent;
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 0 auto 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+    }
+
+    .image-container.red {
+      border-color: var(--red);
+    }
+
+    .image-container.green {
+      border-color: var(--green);
+    }
+
+    .image-container.gold {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px 5px var(--gold);
+    }
+
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    #poepCounter {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: pre-line;
+    }
+
+    #crownContainer {
+      margin-bottom: 12px;
+      height: 64px; /* reserve space */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #crownContainer img {
+      max-width: 64px;
+      max-height: 64px;
+      width: auto;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+      display: block;
+    }
+
+    footer {
+      margin-top: 32px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Reset button styling and position */
+    #reset {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      background: #444;
+      color: #ccc;
+      border-radius: 10px;
+      box-shadow: none;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      width: auto;
+      max-width: 120px;
+      z-index: 1000;
+    }
+
+    #reset:hover {
+      opacity: 1;
+      background: #666;
+      color: white;
+    }
+
+    #reset:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .caption {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
+  <main>
     <h1>Heb je poep in je broek?</h1>
-    <p class="sub">Druk op de knop om het te controleren. 50/50 kans.</p>
+    <p class="sub">Druk op de knop om het te controleren. 50/50 kans, maar hé, er is ook een kleine kans op de Gouden Poep!</p>
 
-    <button id="check">Heb je poep in je broek?</button>
+    <div id="crownContainer"></div>
 
-    <div class="loading" id="loader" aria-hidden="true"></div>
-    <div class="loading-text" id="loaderText" aria-live="polite">Even kijken…</div>
+    <button id="check">Check het</button>
+    <button id="reset">Reset teller</button>
 
-    <section class="result" id="result" aria-live="polite">
-      <div class="image-box" id="imageBox">
-        <!-- Replace this with a real <img> later if you like -->
-        <div class="placeholder">IMAGE</div>
-      </div>
-      <p class="caption" id="caption"></p>
-    </section>
+    <div class="loader" id="loader"></div>
+    <p class="loading-text" id="loadingText">Even kijken…</p>
 
-    <footer>
-      Tip: wil je echte plaatjes? Vervang de <code>.placeholder</code> door een <code>&lt;img src="..." alt=""&gt;</code>.
-    </footer>
+    <div class="result" id="result"></div>
+
+    <p id="poepCounter"></p>
+
+    <footer>Gemaakt met 💩 en ❤️</footer>
   </main>
 
   <script>
-    const btn = document.getElementById('check');
+    const button = document.getElementById('check');
+    const resetButton = document.getElementById('reset');
     const loader = document.getElementById('loader');
-    const loaderText = document.getElementById('loaderText');
+    const loadingText = document.getElementById('loadingText');
     const result = document.getElementById('result');
-    const imageBox = document.getElementById('imageBox');
-    const caption = document.getElementById('caption');
+    const poepCounter = document.getElementById('poepCounter');
+    const crownContainer = document.getElementById('crownContainer');
 
-    function show(el, yes = true) {
-      el.style.display = yes ? '' : 'none';
-    }
+    // Load counters from localStorage or start at zero
+    let poepCount = parseInt(localStorage.getItem('poepCount')) || 0;
+    let goudenPoepCount = parseInt(localStorage.getItem('goudenPoepCount')) || 0;
 
-    btn.addEventListener('click', () => {
-      // Reset UI
-      btn.disabled = true;
-      show(result, false);
-      imageBox.classList.remove('red','green');
-      caption.classList.remove('red','green');
-      caption.textContent = '';
+    updatePoepCounterDisplay();
+    updateCrownDisplay();
 
-      // Show short animation
-      show(loader, true);
-      show(loaderText, true);
+    button.addEventListener('click', () => {
+      result.innerHTML = '';
+      loader.style.display = 'block';
+      loadingText.style.display = 'block';
+      button.disabled = true;
+      resetButton.disabled = true;
 
-      // Wait ~1.1s, then reveal a random result
       setTimeout(() => {
-        const isPoop = Math.random() < 0.5; // 50/50
+        loader.style.display = 'none';
+        loadingText.style.display = 'none';
 
-        if (isPoop) {
-          imageBox.classList.add('red');
-          caption.classList.add('red');
-          caption.textContent = 'Helaas, er zit poep in je broek!';
+        const random = Math.random();
+        let outcome, imgSrc, captionClass, message, borderClass;
+
+        if (random < 0.01) {
+          // Gouden Poep (1%)
+          outcome = 'goudenPoep';
+          imgSrc = 'https://i.imgur.com/ADTHAlg.png';
+          captionClass = 'gold';
+          message = '🎉 Je hebt de Gouden Poep gevonden! 🏆';
+          borderClass = 'gold';
+          goudenPoepCount++;
+          localStorage.setItem('goudenPoepCount', goudenPoepCount);
+        } else if (random < 0.5) {
+          // Poep
+          outcome = 'poep';
+          imgSrc = 'https://i.imgur.com/2S28SL2.jpeg';
+          captionClass = 'red';
+          message = '😬 Helaas, poep in je broek!';
+          borderClass = 'red';
+          poepCount++;
+          localStorage.setItem('poepCount', poepCount);
         } else {
-          imageBox.classList.add('green');
-          caption.classList.add('green');
-          caption.textContent = 'Gelukkig, je hebt geen poep in je broek';
+          // Geen poep
+          outcome = 'geenPoep';
+          imgSrc = 'https://i.imgur.com/w3jZHOj.png';
+          captionClass = 'green';
+          message = '🎉 Gelukkig, je hebt geen poep in je broek!';
+          borderClass = 'green';
         }
 
-        // Swap loader → result
-        show(loader, false);
-        show(loaderText, false);
-        show(result, true);
-        result.classList.add('fade-in');
+        const img = document.createElement('img');
+        img.alt = message;
+        img.src = imgSrc;
 
-        // Re-enable button after reveal
-        btn.disabled = false;
-      }, 1100);
+        const messageEl = document.createElement('p');
+        messageEl.className = 'caption ' + captionClass;
+        messageEl.textContent = message;
+
+        const container = document.createElement('div');
+        container.className = 'image-container ' + borderClass;
+        container.appendChild(img);
+
+        result.appendChild(messageEl);
+        result.appendChild(container);
+
+        updatePoepCounterDisplay();
+        updateCrownDisplay();
+
+        button.disabled = false;
+        resetButton.disabled = false;
+      }, 1000);
     });
+
+    resetButton.addEventListener('click', () => {
+      poepCount = 0;
+      goudenPoepCount = 0;
+      localStorage.removeItem('poepCount');
+      localStorage.removeItem('goudenPoepCount');
+      updatePoepCounterDisplay();
+      updateCrownDisplay();
+      result.innerHTML = '';
+    });
+
+    function updatePoepCounterDisplay() {
+      let msg = '';
+      if (poepCount > 0) {
+        msg += `💩 Je hebt al <strong>${poepCount}</strong> ${poepCount === 1 ? 'keer' : 'keren'} poep in je broek gehad.`;
+      }
+      if (goudenPoepCount > 0) {
+        if (msg) msg += '\n';
+        msg += `👑 Je hebt <strong>${goudenPoepCount}</strong> keer de Gouden Poep gevonden!`;
+      }
+      poepCounter.innerHTML = msg;
+    }
+
+    function updateCrownDisplay() {
+      if (goudenPoepCount > 0) {
+        crownContainer.innerHTML = `<img src="https://i.imgur.com/GaVEZmm.png" alt="Kroon" />`;
+      } else {
+        crownContainer.innerHTML = '';
+      }
+    }
   </script>
 </body>
 </html>
